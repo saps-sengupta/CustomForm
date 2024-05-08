@@ -1,3 +1,6 @@
+let extensionService;
+let metafields;
+
 const ExtensionCommandType = {
     ReloadCheckout: "EXTENSION:RELOAD_CHECKOUT",
     ShowLoadingIndicator: "EXTENSION:SHOW_LOADING_INDICATOR",
@@ -25,7 +28,8 @@ function hideLoadingIndicator() {
 }
 
 const checkoutKitLoaderModule = {
-    load: async function (extension) {
+    load: async function ({extension, cartId, setCartId, setCheckoutid, setFlag, compareConsignments, consignmentUpdateTriggered}) {
+        // eslint-disable-next-line no-undef
         return checkoutKitLoader.load(extension).then(async function (module) {
             // console.log("Checkout loader - extension");
             const params = new URL(document.location).searchParams;
@@ -34,7 +38,7 @@ const checkoutKitLoaderModule = {
 
             const extensionId = params.get("extensionId");
             // console.log("this is exctention id: ", extensionId);
-            cartId = params.get("cartId");
+            setCartId(params.get("cartId"));
 
             async function fetchData() {
                 try {

@@ -199,7 +199,6 @@ const FedEx = {
     },
 };
 
-let cartId;
 let extensionService;
 let payload={};
 let metafields;
@@ -220,6 +219,7 @@ async function sendMessage() {
 const CustomForm = () => {
     console.log('this is metafields after re-render: ',metafields);
     const [formData, setFormData] = useState({});
+    const [cartId, setCartId] = useState("");
    
     const [flag,setFlag]=useState(false);
 
@@ -821,7 +821,7 @@ const CustomForm = () => {
     };
 
     useEffect(() => {
-        checkoutKitLoaderModule.load("extension");
+        checkoutKitLoaderModule.load("extension", cartId, setCartId, setCheckoutid, setFlag, compareConsignments, consignmentUpdateTriggered, metafields);
         // Cleanup function
         return () => {
             // Cleanup code if necessary

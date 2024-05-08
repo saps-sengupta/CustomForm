@@ -3,9 +3,13 @@ import { render, screen, within } from "@testing-library/react";
 import '@testing-library/jest-dom';
 import userEvent from "@testing-library/user-event";
 import CustomForm from "./CustomForm";
+import * as api from "./checkoutLoader";
+
+jest.mock("./checkoutLoader");
 
 describe(CustomForm, () => {
     it("Who Pays Shipping Dropdown is displayed", async () => {
+        api.loadExtensionModule.mockResolvedValue("CartId Updated");
         render(<CustomForm />);
         expect(
             within(await screen.findByTestId("whoPaysShipping")).getByRole("combobox"),

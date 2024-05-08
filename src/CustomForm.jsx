@@ -7,42 +7,49 @@ import Select from "@mui/material/Select";
 import TextField from '@mui/material/TextField';
 import Grid from "@mui/material/Grid";
 import { FormControl, InputLabel, MenuItem } from "@mui/material";
+import checkoutKitLoaderModule from "./checkoutLoader";
 
 const CustomerPreferred = {
     CarrierName: {
         label: "Carrier Name",
         type: "text",
         formName: "CustomerPreferredObj",
+       
         required: true,
     },
     ContactName: {
         label: "Contact Name",
         type: "text",
         formName: "CustomerPreferredObj",
+      
         required: true,
     },
     Name: {
         label: "Name",
         type: "text",
         formName: "CustomerPreferredObj",
+      
         required: true,
     },
     ContactPhone: {
         label: "Contact Phone",
         type: "text",
         formName: "CustomerPreferredObj",
+       
         required: true,
     },
     Address1: {
         label: "Address 1",
         type: "text",
         formName: "CustomerPreferredObj",
+      
         required: true,
     },
     Address2: {
         label: "Address 2",
         type: "text",
         formName: "CustomerPreferredObj",
+     
         required: false,
     },
     State: {
@@ -50,12 +57,14 @@ const CustomerPreferred = {
         type: "dropdown",
         formName: "CustomerPreferredObj",
         required: true,
+     
         fieldOptions:['New York', 'California', 'Texas']
     },
     City: {
         label: "City",
         type: "text",
         formName: "CustomerPreferredObj",
+    
         required: true,
         
     },
@@ -63,6 +72,7 @@ const CustomerPreferred = {
         label: "Zip",
         type: "text",
         formName: "CustomerPreferredObj",
+      
         required: true,
     },
     Country: {
@@ -70,6 +80,7 @@ const CustomerPreferred = {
         type: "dropdown",
         formName: "CustomerPreferredObj",
         required: true,
+      
         fieldOptions:['United States']
     },
 };
@@ -79,18 +90,21 @@ const WillCall = {
         lable: "Contact Name",
         type: "text",
         formName: "WillCallObj",
+        
         required: true,
     },
     ContactEmail: {
         lable: "Contact Email",
         type: "email",
         formName: "WillCallObj",
+       
         required: true,
     },
     ContactPhone: {
         lable: "Contact Phone",
         type: "text",
         formName: "WillCallObj",
+       
         required: true,
     },
 };
@@ -187,7 +201,8 @@ const FedEx = {
 
 let cartId;
 let extensionService;
-let payload;
+let payload={};
+let metafields;
 
 const ExtensionCommandType = {
     ReloadCheckout: "EXTENSION:RELOAD_CHECKOUT",
@@ -198,17 +213,144 @@ const ExtensionCommandType = {
 async function sendMessage() {
     window.top.postMessage(
         "hide-checkout-shipping-continue",
-        "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
+        "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
     );
 }
 
 const CustomForm = () => {
+    console.log('this is metafields after re-render: ',metafields);
     const [formData, setFormData] = useState({});
    
+    const [flag,setFlag]=useState(false);
 
     const [specialInstructions, setSpecialInstructions] = useState("");
     const [accountNumber, setAccountNumber] = useState(0);
+    //console.log('trying to assign to usestate: ', metafields?.whoPaysShippping);
+    const initialwhoPaysShippping = metafields?.whoPaysShippping;
+   // console.log('initialwhoPaysShippping: ', initialwhoPaysShippping);
+    const [whoPaysShippping, setWhoPaysShipping] = useState("Sellars Pays Freight");
+    
+
+    useEffect(()=>{
+        if(initialwhoPaysShippping){
+            setWhoPaysShipping(initialwhoPaysShippping);
+        }
+    },[initialwhoPaysShippping]);
+  
+
+    const initialuseFedExAccount = metafields?.useFedExAccount;
+    const initialAccountNumber = metafields?.AccountNumber;
+   
+    useEffect(()=>{
+        if(initialuseFedExAccount==='Yes'){
+            setIsUsingFedExAccount("Yes");
+        }
+    
+     
+    },[initialuseFedExAccount]);
+
+
+    useEffect(()=>{
+        if(initialAccountNumber){
+            setAccountNumber(initialAccountNumber);
+        }
+      
+     
+    },[initialAccountNumber]);
+
+    const [isDisplayingAccountNumber, setIsDisplayingAccountNumber] =useState("FedEx");
+    const [isUsingFedExAccount, setIsUsingFedExAccount] = useState("No");
+
+    const [FormFields, setFormFields] = useState(FedEx);
+   
+
+    const initialShipper = metafields?.shipper;
+    const [selectedShipper, setSelectedShipper] = useState("FedEx");
     const [sellarsShipper, setSellarsShipper] = useState("Prepaid Truckload");
+
+
+    function formDataUpdate(initialwhoPaysShippping,initialShipper){
+        if(initialwhoPaysShippping==='Sellars Pays Freight'){
+           
+        }
+        else{
+            const formData=metafields?.formData;
+
+           
+            if (formData) {
+                 
+                if( initialShipper==='FedEx'){
+                    setFedExObj(formData);
+                }
+                else if(initialShipper ==='UPS'){
+                    setUPSObj(formData);
+                }
+                else if(initialShipper==='Customer Preferred Carrier'){
+
+                    setCustomerPreferredObj((prevState) =>{   
+                        let newObj={};
+                        for (let key in formData) {
+                            if (key in prevState) {
+                                newObj[key]=formData[key];
+                            }
+                        }
+                       
+                        return newObj;
+                    });
+
+                 
+                }
+                else if(initialShipper === 'Will Call'){
+                  
+                           
+                            setWillCallObj((prevState) =>{   
+                                let newObj={};
+                                for (let key in formData) {
+                                    if (key in prevState) {
+                                        newObj[key]=formData[key];
+                                    }
+                                }
+                              
+                               return newObj;
+                            });
+                        
+                    
+                 
+                }
+
+                
+            }
+        }
+    }       
+
+    useEffect(()=>{
+        //console.log(initialShipper,'asd');
+        if(!initialShipper) return;
+       // console.log(initialwhoPaysShippping,'in effec');
+        if(initialwhoPaysShippping==='Sellars Pays Freight'){
+            setSellarsShipper(initialShipper);
+        }
+        else{
+            setSelectedShipper(initialShipper);
+            formDataUpdate(initialwhoPaysShippping,initialShipper);
+            if (initialShipper === "UPS") {
+                setFormFields(UPS);
+                setIsDisplayingAccountNumber("UPS");
+            } else if (initialShipper === "Will Call") {
+                setFormFields(WillCall);
+                setIsDisplayingAccountNumber("WillCall");
+            } else if (initialShipper === "FedEx") {
+                setFormFields(FedEx);
+                setIsDisplayingAccountNumber("FedEx");
+            } else if (initialShipper === "Customer Preferred Carrier") {
+                setFormFields(CustomerPreferred);
+                setIsDisplayingAccountNumber("Customer Preferred Carrier");
+                
+            }
+          //  console.log('dhekc sgipperL ',initialShipper);    
+        }
+       
+    },[initialShipper]);
 
     const [checkoutid, setCheckoutid] = useState(0);
 
@@ -234,17 +376,6 @@ const CustomForm = () => {
     const [FedExObj, setFedExObj] = useState("Ground");
     const [UPSObj, setUPSObj] = useState("Ground");
 
-    const [whoPaysShippping, setWhoPaysShipping] = useState(
-        "Sellars Pays Freight"
-    );
-    const [isUsingFedExAccount, setIsUsingFedExAccount] = useState("Yes");
-    const [isDisplayingAccountNumber, setIsDisplayingAccountNumber] =
-        useState("FedEx");
-    const [FormFields, setFormFields] = useState(FedEx);
-   
-    const [selectedShipper, setSelectedShipper] = useState("FedEx");
-
-    
     function sleep(ms) {
         return new Promise((resolve) => {
             setTimeout(resolve, ms);
@@ -268,16 +399,6 @@ const CustomForm = () => {
     async function consignmentUpdateTriggered(extensionService, cartId, data) {
         console.log("consignments changed", data);
        
-
-        // showLoadingIndicator();
-        // //post message to parent window - hide continue button
-        // window.top.postMessage(
-        //   "hide-checkout-shipping-continue",
-        //   "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
-        // );
-
-        //perform price update operations
-
         try {
           
             await UpdateCartPrice(cartId);
@@ -288,14 +409,7 @@ const CustomForm = () => {
         //sleep for 3 seconds
         await sleep(1000);
       
-        //post message to parent window - show continue button
-
-        // window.top.postMessage(
-        //   "show-checkout-shipping-continue",
-        //   "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
-        // );
-
-        //window.top.postMessage("checkout-shipping-next-step", "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com");
+       
     }
 
    
@@ -342,10 +456,6 @@ const CustomForm = () => {
     }
 
 
-
-
-
-
     const handleShippingChange = async (event) => {
         // console.log(event.target.value);
         setWhoPaysShipping(event.target.value);
@@ -357,7 +467,7 @@ const CustomForm = () => {
         //post message to parent window - hide continue button
         window.top.postMessage(
             "hide-checkout-shipping-continue",
-            "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
+            "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
         );
 
         //call azure function to update the product prices
@@ -379,7 +489,7 @@ const CustomForm = () => {
         });
         window.top.postMessage(
             "show-checkout-shipping-continue",
-            "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
+            "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
         );
 
     };
@@ -398,6 +508,7 @@ const CustomForm = () => {
     }
 
     function handleFedExChange(e) {
+        console.log(e.target.value);
         setFedExObj(e.target.value);
         
     }
@@ -420,7 +531,7 @@ const CustomForm = () => {
 
     const handleShipperChange = (event) => {
         const Shipper = event.target.value;
-       // console.log("shipper to use: ", event.target.value);
+       console.log("shipper to use: ", event.target.value);
         setSelectedShipper(Shipper);
       
         if (Shipper === "UPS") {
@@ -445,12 +556,14 @@ const CustomForm = () => {
            
             return (
                 <>
+                  
                     <TextField
                         fullWidth
+                       
                         label={fieldName}
                         variant="outlined" name={fieldName}
                         required={fieldType.required}
-                        value={formName[fieldName]}
+                        value={formName === "WillCallObj" ? WillCallObj[fieldName] : customerPreferredObj[fieldName]}
                         onChange={(e) => {
                             if (formName === "FedExObj") {
                                 handleFedExChange(e);
@@ -474,7 +587,7 @@ const CustomForm = () => {
                     <Select
                         style={{ marginBottom: "20px" }}
                         name={fieldName}
-                        value={fieldType[fieldName]}
+                        value={formName === "WillCallObj" ? WillCallObj[fieldName] : customerPreferredObj[fieldName]}
                         label={`Select a ${fieldName}`}
                         required={fieldType.required}
                         onChange={(e) => {
@@ -528,7 +641,7 @@ const CustomForm = () => {
                         type="email"
                         label={fieldName}
                         name={fieldName}
-                        value={formName[fieldName]}
+                        value={formName === "WillCallObj" ? WillCallObj[fieldName] : customerPreferredObj[fieldName]}
                         onChange={(e) => {
                             if (formName === "FedExObj") {
                                 handleFedExChange(e);
@@ -550,81 +663,72 @@ const CustomForm = () => {
         setIsUsingFedExAccount(e.target.value);
     };
 
-    // async function updateCartDiscount() {
-    //   console.log('inside updateCartDiscount ');
-    //   const myHeaders = new Headers();
-    //   myHeaders.append("X-Auth-Token", "44v4r4o38ki0gznr4kn5exdznzft69c");
-    //   myHeaders.append("Content-Type", "application/json");
-    //   myHeaders.append( 'Access-Control-Allow-Origin', '*');
-    //   //const raw = JSON.stringify({ "cart": { "discounts": [{ "discounted_amount": 2, "name": "manual" }] } });
+   
 
-    //   const checkoutid = cart.id;
-    //   const res=await fetch(`https://api-hit-pied.vercel.app/discount/${checkoutid}`, { method: "GET", headers: myHeaders, redirect: "follow" });
-    //   const data= await res.json();
-    //   console.log('updated cart value returned from dicounted api: ',data);
-    // }
-
-    // async function UpdateCartPrice() {
-    //   console.log("inside UpdateCartPrice ");
-    //   const myHeaders = new Headers();
-
-    //   myHeaders.append("Content-Type", "application/json");
-    //   myHeaders.append("Access-Control-Allow-Origin", "*");
-
-    //   const raw = JSON.stringify( {
-    //     checkoutId:checkoutid,
-    //     whoPaysShipping: whoPaysShippping === 'Customer Pays Freight' ? 'Customer' : 'Seller',
-    //     metafields:payload
-    //   });
-
-    //   const res = await fetch(
-    //     `http://localhost:3000/updateCartItems`,
-    //     { method: "POST", headers: myHeaders, body: raw, redirect: "follow" }
-    //   );
-    //   const data = await res.json();
-    //   console.log("updated cart prices and metafield data returned: ", data);
-    //   console.log("reload checkout");
-    //   extensionService.post({ type: ExtensionCommandType.ReloadCheckout });
-    // }
-    //   async function customerJWT() {
-    //     console.log("Inside JWT");
-    //     let abc = await sessionStorage.getItem('sf-currentCustomerJWT');
-    //     console.log("Found value",abc);
-    //   }
-
-    async function UpdateCartPrice(cartId, whoPaysFreight) {
+    async function UpdateCartPrice(cartId, whoPaysFreightLocal) {
         let raw;
-        if (whoPaysFreight) {
+        //here fucntions second atturibute's name is similar to usestate varible so kindly do not get confused with 2nd parameter of function with state variable as both are different
+      //  console.log('inside updateCartItems ..........');
+        if (whoPaysFreightLocal) {
+            if(whoPaysFreightLocal === "Customer Pays Freight"){
+                if (!payload?.shipper || payload.shipper==='Prepaid Truckload' || payload.shipper==='Prepaid LTL') {      
+                    payload.shipper = 'FedEx';
+                    payload.useFedExAccount = isUsingFedExAccount;
+                    payload.specialInstructions = specialInstructions;
+                    payload.formData = FedExObj;
+                }
+                
+            }
+            else{
+                if(!payload?.shipper || payload.shipper==='FedEx' || payload.shipper==='UPS' || payload.shipper==='Customer Preferred Carrier' || payload.shipper==='Will Call'){
+                    payload={};
+                   // console.log('in');
+                    payload.shipper=sellarsShipper ?  sellarsShipper : 'Prepaid Truckload';
+                    payload.specialInstructions=specialInstructions;      
+                }
+            }
             raw = JSON.stringify({
                 checkoutId: cartId,
-                whoPaysShipping: whoPaysFreight === "Customer Pays Freight" ? "Customer Pays Freight" : "Sellars Pays Freight",
+                whoPaysShipping: whoPaysFreightLocal === "Customer Pays Freight" ? "Customer Pays Freight" : "Sellars Pays Freight",
                 metafields: payload,
             });
         }
         else {
+            if(whoPaysShippping === "Customer Pays Freight"){
+                if (!payload?.shipper || payload.shipper==='Prepaid Truckload' || payload.shipper==='Prepaid LTL') {
+                    payload.shipper = 'FedEx';
+                    payload.useFedExAccount = isUsingFedExAccount;
+                    payload.specialInstructions = specialInstructions;
+                    payload.formData = FedExObj;
+                }
+                
+            }
+            else{
+              
+                if(!payload?.shipper || payload.shipper==='FedEx' || payload.shipper==='UPS' || payload.shipper==='Customer Preferred Carrier' || payload.shipper==='Will Call'){
+                    payload={};
+                    payload.shipper='Prepaid Truckload';
+                    payload.specialInstructions=specialInstructions;      
+                }
+            }
             raw = JSON.stringify({
                 checkoutId: cartId,
-                whoPaysShipping: whoPaysFreight === "Customer Pays Freight" ? "Customer Pays Freight" : "Sellars Pays Freight",
+                whoPaysShipping: whoPaysShippping === "Customer Pays Freight" ? "Customer Pays Freight" : "Sellars Pays Freight",
                 metafields: payload,
             });
+          
         }
 
-        console.log(
-            "inside UpdateCartPrice & this is the current checkoutid: ",
-            checkoutid
-        );
-        console.log(
-            "inside UpdateCartPrice & this is the current cartId: ",
-            cartId
-        );
+       // console.log( "inside UpdateCartPrice & this is the current checkoutid: ", checkoutid);
+       
         const myHeaders = new Headers();
 
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Access-Control-Allow-Origin", "*");
-
+      
         try {
             //customerJWT();
-            const res = await fetch(`https://sam-bc-sandbox.azurewebsites.net/api/updateproductprices`, {
+            const res = await fetch(`http://localhost:3000/updateCartItems`, {
                 method: "POST",
                 headers: myHeaders,
                 body: raw,
@@ -649,7 +753,7 @@ const CustomForm = () => {
         if (whoPaysShippping === "Sellars Pays Freight") {
             payload = {
                 whoPaysShippping,
-                sellarsShipper,
+                shipper:sellarsShipper,
                 specialInstructions
             };
         } else if (whoPaysShippping === "Customer Pays Freight") {
@@ -657,11 +761,12 @@ const CustomForm = () => {
                 payload = {
                     whoPaysShippping,
                     shipper: selectedShipper,
-                    useFedExAccount: isDisplayingAccountNumber,
+                   // useFedExAccount: isDisplayingAccountNumber,
+                    useFedExAccount:isUsingFedExAccount,
                     specialInstructions,
                     formData: FedExObj,
                 };
-                if (payload.useFedExAccount) {
+                if (isUsingFedExAccount==='Yes') {
                     payload.AccountNumber = accountNumber;
                 }
             } else if (selectedShipper === "Customer Preferred Carrier") {
@@ -694,7 +799,7 @@ const CustomForm = () => {
         //post message to parent window - hide continue button
         window.top.postMessage(
             "hide-checkout-shipping-continue",
-            "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
+            "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
         );
         try {
             await UpdateCartPrice(cartId);
@@ -711,95 +816,29 @@ const CustomForm = () => {
 
         window.top.postMessage(
             "show-checkout-shipping-continue",
-            "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
+            "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
         );
-
-
-
     };
 
     useEffect(() => {
-        checkoutKitLoader.load("extension").then(async function (module) {
-            // console.log("Checkout loader - extension");
-            const params = new URL(document.location).searchParams;
-
-            // console.log("params: ", params);
-
-            const extensionId = params.get("extensionId");
-            // console.log("this is exctention id: ", extensionId);
-            cartId = params.get("cartId");
-
-            console.log("this is card id: ", cartId);
-            setCheckoutid(cartId);
-
-            const parentOrigin = params.get("parentOrigin");
-            //  console.log("this is parentOrigin: ", parentOrigin);
-
-            extensionService = await module.initializeExtensionService({
-                extensionId,
-                parentOrigin,
-                taggedElementId: "container",
-            });
-
-            // console.log("extentionService: ", extensionService);
-
-            extensionService.addListener(
-                "EXTENSION:CONSIGNMENTS_CHANGED",
-                async (data) => {
-                    console.log("inside consignments chnaged listener");
-                    showLoadingIndicator();
-                   
-                    //console.log(data?.payload?.consignments,data?.payload?.previousConsignments);
-                   
-                    //post message to parent window - hide continue button
-                    window.top.postMessage(
-                        "hide-checkout-shipping-continue",
-                        "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
-                    );
-
-
-
-                    const priceUpdateNeeded = compareConsignments(
-                        data?.payload?.consignments,
-                        data?.payload?.previousConsignments
-                    );
-                    if (priceUpdateNeeded) {
-                        console.log("Consignment updated, need to trigger price update.");
-                        consignmentUpdateTriggered(extensionService, cartId, data);
-                        console.log("do not reload checkout with updated price.");
-                        // extensionService.post({
-                        //     type: ExtensionCommandType.ReloadCheckout,
-                        // });
-
-                    } else {
-                        console.log(
-                            "Key Consignment fields(country, state, shipping option) not updated, no need to trigger price update."
-                        );
-                     
-                       
-  
-                    }
-                    await sleep(1000);
-                    hideLoadingIndicator();
-                    window.top.postMessage(
-                      "show-checkout-shipping-continue",
-                      "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
-                  );
-
-                }
-            );
-        });
-
+        checkoutKitLoaderModule.load("extension");
         // Cleanup function
         return () => {
             // Cleanup code if necessary
         };
     }, []);
 
+
+
+    useEffect(()=>{
+        
+          
+    })
+
     return (
         <div id="container">
             <div>
-                <form fullWidth onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit}>
                     <div>
                         <div style={{ marginBottom: "5px" }}>Who Pays Shipping</div>
                         <Select
@@ -838,11 +877,12 @@ const CustomForm = () => {
                         <>
                             <div>
                                 <div style={{ marginBottom: "5px" }}>Shipper To Use</div>
+                              
                                 <Select
                                     data-testid=""
                                     style={{ marginBottom: "20px" }}
                                     fullWidth
-                                    defaultValue="FedEx"
+                                    value={selectedShipper}
                                     onChange={handleShipperChange}
                                 >
                                     <MenuItem value="FedEx">FedEx</MenuItem>
@@ -852,6 +892,7 @@ const CustomForm = () => {
                                     <MenuItem value="UPS">UPS</MenuItem>
                                     <MenuItem value="Will Call">Will Call</MenuItem>
                                 </Select>
+                              
                             </div>
                             {isDisplayingAccountNumber === "Customer Preferred Carrier" ||
                                 isDisplayingAccountNumber === "UPS" ? (
@@ -861,6 +902,7 @@ const CustomForm = () => {
                                         label="Account Number"
                                         variant="outlined"
                                         required
+                                        value={accountNumber}
                                         onChange={(e) => {
                                             setAccountNumber(e.target.value);
                                         }}
@@ -875,16 +917,18 @@ const CustomForm = () => {
                                             Use My FedEx Account
                                         </label>
                                     </div>
+                                    <div></div>
                                     <Select
                                         style={{ marginBottom: "20px" }}
                                         fullWidth
-                                        defaultValue="Yes"
+                                        value={isUsingFedExAccount}
                                         onChange={handleFedExAccountChange}
                                         name="useFedExAccount"
                                         id="useFedExAccount"
                                     >
-                                        <MenuItem value="Yes">Yes</MenuItem>
                                         <MenuItem value="No">No</MenuItem>
+                                        <MenuItem value="Yes">Yes</MenuItem>
+                                      
                                     </Select>
 
                                     {isUsingFedExAccount === "Yes" && (
@@ -894,6 +938,7 @@ const CustomForm = () => {
                                                 label="Account Number"
                                                 variant="outlined"
                                                 required
+                                                value={accountNumber}
                                                 onChange={(e) => {
                                                     setAccountNumber(e.target.value);
                                                 }}
@@ -957,7 +1002,9 @@ const CustomForm = () => {
                     </button>
                 </form>
             </div>
+                        {/* <div>{selectedShipper}</div> */}
         </div>
+       
     );
 };
 

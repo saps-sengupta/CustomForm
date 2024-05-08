@@ -384,14 +384,14 @@ const CustomForm = () => {
     }
 
     function showLoadingIndicator() {
-        extensionServiceModule().post({
+        extensionServiceModule.post({
             type: ExtensionCommandType.ShowLoadingIndicator,
             payload: { show: true },
         });
     }
 
     function hideLoadingIndicator() {
-        extensionServiceModule().post({
+        extensionServiceModule.post({
             type: ExtensionCommandType.ShowLoadingIndicator,
             payload: { show: false },
         });
@@ -461,7 +461,7 @@ const CustomForm = () => {
         // console.log(event.target.value);
         setWhoPaysShipping(event.target.value);
        
-        extensionServiceModule().post({
+        extensionServiceModule.post({
             type: ExtensionCommandType.ShowLoadingIndicator,
             payload: { show: true },
         });
@@ -485,7 +485,7 @@ const CustomForm = () => {
         
 
         console.log(" reload checkout with updated price.");
-        extensionServiceModule().post({
+        extensionServiceModule.post({
             type: ExtensionCommandType.ReloadCheckout,
         });
         window.top.postMessage(
@@ -811,7 +811,7 @@ const CustomForm = () => {
         await sleep(1000);
         hideLoadingIndicator();
         console.log(" reload checkout with updated price.");
-        extensionServiceModule().post({
+        extensionServiceModule.post({
             type: ExtensionCommandType.ReloadCheckout,
         });
 

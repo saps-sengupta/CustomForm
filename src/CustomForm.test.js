@@ -4,8 +4,12 @@ import '@testing-library/jest-dom';
 import userEvent from "@testing-library/user-event";
 import CustomForm from "./CustomForm";
 import checkoutKitLoader from "./checkoutLoader";
+import extensionServiceModule from "./extensionModule";
 
 jest.mock("./checkoutLoader");
+jest.mock("./extensionModule", () => ({
+    post: jest.fn(),
+}));
 
 describe(CustomForm, () => {
     // it("Who Pays Shipping Dropdown is displayed", async () => {
@@ -17,6 +21,7 @@ describe(CustomForm, () => {
     // });
     it("Who Pays Shipping Dropdown options are visible", async () => {
         checkoutKitLoader.load.mockResolvedValue("CartId Updated");
+        extensionServiceModule.post.mockResolvedValue("");
         render(<CustomForm />);
         const dropdown = within(await screen.findByTestId("whoPaysShipping")).getByRole("combobox");
         await userEvent.click(dropdown);
@@ -29,6 +34,7 @@ describe(CustomForm, () => {
     });
     it("Who Pays Shipping Dropdown should show selected value", async () => {
         checkoutKitLoader.load.mockResolvedValue("CartId Updated");
+        extensionServiceModule.post.mockResolvedValue("");
         render(<CustomForm />);
         const dropdown = within(await screen.findByTestId("whoPaysShipping")).getByRole("combobox");
         await userEvent.click(dropdown);

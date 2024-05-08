@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import Grid from "@mui/material/Grid";
 import { FormControl, InputLabel, MenuItem } from "@mui/material";
 import checkoutKitLoaderModule from "./checkoutLoader";
+import extensionServiceModule from "./extensionModule";
 
 const CustomerPreferred = {
     CarrierName: {
@@ -383,14 +384,14 @@ const CustomForm = () => {
     }
 
     function showLoadingIndicator() {
-        extensionService.post({
+        extensionServiceModule().post({
             type: ExtensionCommandType.ShowLoadingIndicator,
             payload: { show: true },
         });
     }
 
     function hideLoadingIndicator() {
-        extensionService.post({
+        extensionServiceModule().post({
             type: ExtensionCommandType.ShowLoadingIndicator,
             payload: { show: false },
         });
@@ -460,7 +461,7 @@ const CustomForm = () => {
         // console.log(event.target.value);
         setWhoPaysShipping(event.target.value);
        
-        extensionService.post({
+        extensionServiceModule().post({
             type: ExtensionCommandType.ShowLoadingIndicator,
             payload: { show: true },
         });
@@ -484,7 +485,7 @@ const CustomForm = () => {
         
 
         console.log(" reload checkout with updated price.");
-        extensionService.post({
+        extensionServiceModule().post({
             type: ExtensionCommandType.ReloadCheckout,
         });
         window.top.postMessage(
@@ -810,7 +811,7 @@ const CustomForm = () => {
         await sleep(1000);
         hideLoadingIndicator();
         console.log(" reload checkout with updated price.");
-        extensionService.post({
+        extensionServiceModule().post({
             type: ExtensionCommandType.ReloadCheckout,
         });
 

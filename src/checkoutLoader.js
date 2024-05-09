@@ -38,7 +38,9 @@ const checkoutKitLoaderModule = {
 
             const extensionId = params.get("extensionId");
             // console.log("this is exctention id: ", extensionId);
+            console.log("Before",cartId);
             setCartId(params.get("cartId"));
+            console.log("After",cartId);
 
             async function fetchData() {
                 try {

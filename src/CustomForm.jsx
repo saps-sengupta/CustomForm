@@ -862,13 +862,13 @@ const CustomForm = () => {
                         <div>
                             <div style={{ marginBottom: "5px" }}>Shipper To Use</div>
                             <Select
+                                data-testid="shipperToUse1"
                                 style={{ marginBottom: "20px" }}
                                 fullWidth
                                 required
                                 value={sellarsShipper}
                                 onChange={handleSellersShipperChange}
                                 name=""
-                                
                             >
                                 <MenuItem value="Prepaid Truckload">Prepaid Truckload</MenuItem>
                                 <MenuItem value="Prepaid LTL">Prepaid LTL</MenuItem>
@@ -880,7 +880,7 @@ const CustomForm = () => {
                                 <div style={{ marginBottom: "5px" }}>Shipper To Use</div>
                               
                                 <Select
-                                    data-testid=""
+                                    data-testid="shipperToUse2"
                                     style={{ marginBottom: "20px" }}
                                     fullWidth
                                     value={selectedShipper}

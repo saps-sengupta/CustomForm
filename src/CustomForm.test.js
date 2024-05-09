@@ -3,17 +3,21 @@ import { render, screen, within } from "@testing-library/react";
 import '@testing-library/jest-dom';
 import userEvent from "@testing-library/user-event";
 import CustomForm from "./CustomForm";
-import checkoutKitLoader from "./checkoutLoader";
 import extensionServiceModule from "./extensionModule";
 
-jest.mock("./checkoutLoader");
+// jest.mock("./checkoutLoader");
+
+jest.mock("./CheckoutLoader", () => () => {
+    return <mock-checkout data-testid="checkout"/>;
+  });
+
 jest.mock("./extensionModule", () => ({
     post: jest.fn(),
 }));
 
 describe(CustomForm, () => {
     it("WhoPaysShipping Dropdown and default ShippertoUse Dropdown is displayed", async () => {
-        checkoutKitLoader.load.mockResolvedValue("CartId Updated");
+        // checkoutKitLoader.load.mockResolvedValue("CartId Updated");
         extensionServiceModule.post.mockResolvedValue("");
         render(<CustomForm />);
         expect(
@@ -24,7 +28,11 @@ describe(CustomForm, () => {
         ).toBeInTheDocument();
     });
     it("WhoPaysShipping Dropdown options are visible", async () => {
-        checkoutKitLoader.load.mockResolvedValue("CartId Updated");
+        // checkoutKitLoader.load.mockResolvedValue("CartId Updated");
+        jest.doMock('./checkoutLoader', () => {
+            const ComponentToMock = () => <></>;
+            return ComponentToMock;
+          });
         extensionServiceModule.post.mockResolvedValue("");
         render(<CustomForm />);
         const dropdown = within(await screen.findByTestId("whoPaysShipping")).getByRole("combobox");
@@ -37,7 +45,11 @@ describe(CustomForm, () => {
         ).toBeInTheDocument();
     });
     it("WhoPaysShipping Dropdown should show selected value", async () => {
-        checkoutKitLoader.load.mockResolvedValue("CartId Updated");
+        // checkoutKitLoader.load.mockResolvedValue("CartId Updated");
+        jest.doMock('./checkoutLoader', () => {
+            const ComponentToMock = () => <></>;
+            return ComponentToMock;
+          });
         extensionServiceModule.post.mockResolvedValue("");
         render(<CustomForm />);
         const dropdown = within(await screen.findByTestId("whoPaysShipping")).getByRole("combobox");
@@ -46,7 +58,11 @@ describe(CustomForm, () => {
         expect(screen.getByText("Customer Pays Freight")).toBeInTheDocument();
     });
     it("Should show dropdown for Customer preffered carried when whoPaysShipping is Customer", async () => {
-        checkoutKitLoader.load.mockResolvedValue("CartId Updated");
+        // checkoutKitLoader.load.mockResolvedValue("CartId Updated");
+        jest.doMock('./checkoutLoader', () => {
+            const ComponentToMock = () => <></>;
+            return ComponentToMock;
+          });
         extensionServiceModule.post.mockResolvedValue("");
         render(<CustomForm />);
         const whoPaysDropdown = within(await screen.findByTestId("whoPaysShipping")).getByRole("combobox");

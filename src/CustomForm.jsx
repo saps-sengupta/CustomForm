@@ -7,7 +7,7 @@ import Select from "@mui/material/Select";
 import TextField from '@mui/material/TextField';
 import Grid from "@mui/material/Grid";
 import { FormControl, InputLabel, MenuItem } from "@mui/material";
-import CheckoutLoader from "./checkoutLoader";
+import CheckoutLoader from "./CheckoutLoader";
 import extensionServiceModule from "./extensionModule";
 
 const CustomerPreferred = {

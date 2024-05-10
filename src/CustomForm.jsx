@@ -410,10 +410,7 @@ const CustomForm = () => {
         //sleep for 3 seconds
         await sleep(1000);
 
-
     }
-
-
 
     function compareConsignments(consignments, previousConsignments) {
         let changed = false;
@@ -907,6 +904,7 @@ const CustomForm = () => {
                                             onChange={(e) => {
                                                 setAccountNumber(e.target.value);
                                             }}
+                                            data-testid="accountNumber-UPS/CPC"
                                         />
                                     </div>
                                 ) : null}
@@ -926,6 +924,7 @@ const CustomForm = () => {
                                             onChange={handleFedExAccountChange}
                                             name="useFedExAccount"
                                             id="useFedExAccount"
+                                            data-testid="myFedEx"
                                         >
                                             <MenuItem value="No">No</MenuItem>
                                             <MenuItem value="Yes">Yes</MenuItem>
@@ -935,6 +934,7 @@ const CustomForm = () => {
                                         {isUsingFedExAccount === "Yes" && (
                                             <div style={{ marginBottom: "20px" }}>
                                                 <TextField
+                                                    data-testid="accountNumberFedEx"
                                                     fullWidth
                                                     label="Account Number"
                                                     variant="outlined"

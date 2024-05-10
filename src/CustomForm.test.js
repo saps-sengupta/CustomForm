@@ -3,11 +3,12 @@ import { render, screen, within } from "@testing-library/react";
 import '@testing-library/jest-dom';
 import userEvent from "@testing-library/user-event";
 import CustomForm from "./CustomForm";
+import CheckoutLoader from "./checkoutLoader";
 import extensionServiceModule from "./extensionModule";
 
 // jest.mock("./checkoutLoader");
 
-jest.mock("./CheckoutLoader", () => () => {
+jest.mock("./checkoutLoader", () => () => {
     return <mock-checkout data-testid="checkout"/>;
   });
 
@@ -132,6 +133,7 @@ describe(CustomForm, () => {
         const shipperDropdown = within(await screen.findByTestId("shipperToUse2")).getByRole("combobox");
         await userEvent.click(shipperDropdown);
         await userEvent.click(await screen.findByRole("option", { name: "Customer Preferred Carrier" }));
+        expect(screen.getByText("Account Number")).toBeInTheDocument();
         expect(screen.getByText("CarrierName")).toBeInTheDocument();
         expect(screen.getByText("ContactName")).toBeInTheDocument();
         expect(screen.getByText("ContactPhone")).toBeInTheDocument();

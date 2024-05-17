@@ -227,7 +227,7 @@ const CheckoutLoader = ({ cartId, setCartId, setCheckoutid, setFlag, compareCons
                     await sleep(1000);
                     hideLoadingIndicator();
                     window.top.postMessage(
-                        "show-checkout-shipping-continue",
+                        "hide-checkout-shipping-continue",
                         "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
                     );
     

@@ -743,9 +743,6 @@ const CustomForm = () => {
     }
 
     const handleSubmit = async (e) => {
-        window.top.postMessage("submit-continue", 
-        "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
-        );
         e.preventDefault();
         if (whoPaysShippping === "Sellars Pays Freight") {
             payload = {
@@ -817,6 +814,10 @@ const CustomForm = () => {
         // Cleanup function
         // console.log("checkout", cartId);
         // Checkout(cartId);
+        
+        window.top.postMessage("submit-continue", 
+        "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
+        );
         return () => {
             // Cleanup code if necessary
         };

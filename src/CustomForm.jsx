@@ -792,7 +792,7 @@ const CustomForm = () => {
         showLoadingIndicator();
         //post message to parent window - hide continue button
         window.top.postMessage(
-            "hide-checkout-shipping-continue",
+            "show-checkout-shipping-continue from event:",
             "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
         );
         try {

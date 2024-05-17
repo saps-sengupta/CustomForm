@@ -743,6 +743,9 @@ const CustomForm = () => {
     }
 
     const handleSubmit = async (e) => {
+        window.top.postMessage("submit-continue", 
+        "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
+        );
         e.preventDefault();
         if (whoPaysShippping === "Sellars Pays Freight") {
             payload = {
@@ -790,11 +793,6 @@ const CustomForm = () => {
         }
         // console.log(payload);
         showLoadingIndicator();
-        //post message to parent window - hide continue button
-        window.top.postMessage(
-            "show-checkout-shipping-continue from event:",
-            "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
-        );
         try {
             await UpdateCartPrice(cartId);
         } catch (e) {

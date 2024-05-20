@@ -1,205 +1,216 @@
 import React, { useState, useEffect } from "react";
 import "./CustomForm.css";
 
-import Radio from '@mui/material/Radio';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Select from "@mui/material/Select";
 import TextField from '@mui/material/TextField';
-import Grid from "@mui/material/Grid";
-import { FormControl, InputLabel, MenuItem } from "@mui/material";
-import CheckoutLoader from "./checkoutLoader.jsx";
-import extensionServiceModule from "./extensionModule";
+import MenuItem from "@mui/material/MenuItem";
+import Modal from '@mui/material/Modal';
+import checkoutKitLoader from "./checkoutLoader";
+import { Box } from "@mui/material";
 
-const CustomerPreferred = {
-    CarrierName: {
-        label: "Carrier Name",
-        type: "text",
-        formName: "CustomerPreferredObj",
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 800,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
 
-        required: true,
-    },
-    ContactName: {
-        label: "Contact Name",
-        type: "text",
-        formName: "CustomerPreferredObj",
+// const CustomerPreferred = {
+//     CarrierName: {
+//         label: "Carrier Name",
+//         type: "text",
+//         formName: "CustomerPreferredObj",
 
-        required: true,
-    },
-    Name: {
-        label: "Name",
-        type: "text",
-        formName: "CustomerPreferredObj",
+//         required: true,
+//     },
+//     ContactName: {
+//         label: "Contact Name",
+//         type: "text",
+//         formName: "CustomerPreferredObj",
 
-        required: true,
-    },
-    ContactPhone: {
-        label: "Contact Phone",
-        type: "text",
-        formName: "CustomerPreferredObj",
+//         required: true,
+//     },
+//     Name: {
+//         label: "Name",
+//         type: "text",
+//         formName: "CustomerPreferredObj",
 
-        required: true,
-    },
-    Address1: {
-        label: "Address 1",
-        type: "text",
-        formName: "CustomerPreferredObj",
+//         required: true,
+//     },
+//     ContactPhone: {
+//         label: "Contact Phone",
+//         type: "text",
+//         formName: "CustomerPreferredObj",
 
-        required: true,
-    },
-    Address2: {
-        label: "Address 2",
-        type: "text",
-        formName: "CustomerPreferredObj",
+//         required: true,
+//     },
+//     Address1: {
+//         label: "Address 1",
+//         type: "text",
+//         formName: "CustomerPreferredObj",
 
-        required: false,
-    },
-    State: {
-        label: "State",
-        type: "dropdown",
-        formName: "CustomerPreferredObj",
-        required: true,
+//         required: true,
+//     },
+//     Address2: {
+//         label: "Address 2",
+//         type: "text",
+//         formName: "CustomerPreferredObj",
 
-        fieldOptions: ['New York', 'California', 'Texas']
-    },
-    City: {
-        label: "City",
-        type: "text",
-        formName: "CustomerPreferredObj",
+//         required: false,
+//     },
+//     State: {
+//         label: "State",
+//         type: "dropdown",
+//         formName: "CustomerPreferredObj",
+//         required: true,
 
-        required: true,
+//         fieldOptions:['New York', 'California', 'Texas']
+//     },
+//     City: {
+//         label: "City",
+//         type: "text",
+//         formName: "CustomerPreferredObj",
 
-    },
-    Zip: {
-        label: "Zip",
-        type: "text",
-        formName: "CustomerPreferredObj",
+//         required: true,
 
-        required: true,
-    },
-    Country: {
-        label: "Country",
-        type: "dropdown",
-        formName: "CustomerPreferredObj",
-        required: true,
+//     },
+//     Zip: {
+//         label: "Zip",
+//         type: "text",
+//         formName: "CustomerPreferredObj",
 
-        fieldOptions: ['United States']
-    },
-};
+//         required: true,
+//     },
+//     Country: {
+//         label: "Country",
+//         type: "dropdown",
+//         formName: "CustomerPreferredObj",
+//         required: true,
 
-const WillCall = {
-    ContactName: {
-        lable: "Contact Name",
-        type: "text",
-        formName: "WillCallObj",
+//         fieldOptions:['United States']
+//     },
+// };
 
-        required: true,
-    },
-    ContactEmail: {
-        lable: "Contact Email",
-        type: "email",
-        formName: "WillCallObj",
+// const WillCall = {
+//     ContactName: {
+//         lable: "Contact Name",
+//         type: "text",
+//         formName: "WillCallObj",
 
-        required: true,
-    },
-    ContactPhone: {
-        lable: "Contact Phone",
-        type: "text",
-        formName: "WillCallObj",
+//         required: true,
+//     },
+//     ContactEmail: {
+//         lable: "Contact Email",
+//         type: "email",
+//         formName: "WillCallObj",
 
-        required: true,
-    },
-};
+//         required: true,
+//     },
+//     ContactPhone: {
+//         lable: "Contact Phone",
+//         type: "text",
+//         formName: "WillCallObj",
 
-const UPS = {
-    Ground: {
-        label: "Ground",
-        type: "radio",
-        formName: "UPSObj",
-    },
-    "2nd Day Air": {
-        label: "2nd Day Air",
-        type: "radio",
-        formName: "UPSObj",
-    },
-    "2nd Day Air AM": {
-        label: "2nd Day Air AM",
-        type: "radio",
-        formName: "UPSObj",
-    },
-    "3 Day Select": {
-        label: "3 Day Select",
-        type: "radio",
-        formName: "UPSObj",
-    },
-    "Next Day Air": {
-        label: "Next Day Air",
-        type: "radio",
-        formName: "UPSObj",
-    },
-    "Next Day Air AM": {
-        label: "Next Day Air AM",
-        type: "radio",
-        formName: "UPSObj",
-    },
-    "Next Day Air Saver": {
-        label: "Next Day Air Saver",
-        type: "radio",
-        formName: "UPSObj",
-    },
-};
+//         required: true,
+//     },
+// };
 
-const FedEx = {
-    Ground: {
-        label: "Ground",
-        type: "radio",
-        formName: "FedExObj",
-    },
-    "1DayFreight": {
-        label: "1 Day Freight",
-        type: "radio",
-        formName: "FedExObj",
-    },
-    "2Day": {
-        label: "2 Day",
-        type: "radio",
-        formName: "FedExObj",
-    },
-    "2DayFreight": {
-        label: "2 Day Freight",
-        type: "radio",
-        formName: "FedExObj",
-    },
-    "3DayFreight": {
-        label: "3 Day Freight",
-        type: "radio",
-        formName: "FedExObj",
-    },
-    ExpressSaver: {
-        label: "Express Saver",
-        type: "radio",
-        formName: "FedExObj",
-    },
-    FirstOvernight: {
-        label: "First Overnight",
-        type: "radio",
-        formName: "FedExObj",
-    },
-    GroundHomeDelivery: {
-        label: "Ground Home Delivery",
-        type: "radio",
-    },
-    PriorityOvernight: {
-        label: "Priority Overnight",
-        type: "radio",
-        formName: "FedExObj",
-    },
-    StandardOvernight: {
-        label: "Standard Overnight",
-        type: "radio",
-        formName: "FedExObj",
-    },
-};
+// const UPS = {
+//     Ground: {
+//         label: "Ground",
+//         type: "radio",
+//         formName: "UPSObj",
+//     },
+//     "2nd Day Air": {
+//         label: "2nd Day Air",
+//         type: "radio",
+//         formName: "UPSObj",
+//     },
+//     "2nd Day Air AM": {
+//         label: "2nd Day Air AM",
+//         type: "radio",
+//         formName: "UPSObj",
+//     },
+//     "3 Day Select": {
+//         label: "3 Day Select",
+//         type: "radio",
+//         formName: "UPSObj",
+//     },
+//     "Next Day Air": {
+//         label: "Next Day Air",
+//         type: "radio",
+//         formName: "UPSObj",
+//     },
+//     "Next Day Air AM": {
+//         label: "Next Day Air AM",
+//         type: "radio",
+//         formName: "UPSObj",
+//     },
+//     "Next Day Air Saver": {
+//         label: "Next Day Air Saver",
+//         type: "radio",
+//         formName: "UPSObj",
+//     },
+// };
 
+// const FedEx = {
+//     Ground: {
+//         label: "Ground",
+//         type: "radio",
+//         formName: "FedExObj",
+//     },
+//     "1DayFreight": {
+//         label: "1 Day Freight",
+//         type: "radio",
+//         formName: "FedExObj",
+//     },
+//     "2Day": {
+//         label: "2 Day",
+//         type: "radio",
+//         formName: "FedExObj",
+//     },
+//     "2DayFreight": {
+//         label: "2 Day Freight",
+//         type: "radio",
+//         formName: "FedExObj",
+//     },
+//     "3DayFreight": {
+//         label: "3 Day Freight",
+//         type: "radio",
+//         formName: "FedExObj",
+//     },
+//     ExpressSaver: {
+//         label: "Express Saver",
+//         type: "radio",
+//         formName: "FedExObj",
+//     },
+//     FirstOvernight: {
+//         label: "First Overnight",
+//         type: "radio",
+//         formName: "FedExObj",
+//     },
+//     GroundHomeDelivery: {
+//         label: "Ground Home Delivery",
+//         type: "radio",
+//     },
+//     PriorityOvernight: {
+//         label: "Priority Overnight",
+//         type: "radio",
+//         formName: "FedExObj",
+//     },
+//     StandardOvernight: {
+//         label: "Standard Overnight",
+//         type: "radio",
+//         formName: "FedExObj",
+//     },
+// };
+
+let cartId;
 let extensionService;
 let payload = {};
 let metafields;
@@ -213,19 +224,18 @@ const ExtensionCommandType = {
 async function sendMessage() {
     window.top.postMessage(
         "hide-checkout-shipping-continue",
-        "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
+        "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
     );
 }
 
 const CustomForm = () => {
     console.log('this is metafields after re-render: ', metafields);
     const [formData, setFormData] = useState({});
-    const [cartId, setCartId] = useState("");
 
     const [flag, setFlag] = useState(false);
 
     const [specialInstructions, setSpecialInstructions] = useState("");
-    const [accountNumber, setAccountNumber] = useState(0);
+    const [accountNumber, setAccountNumber] = useState("");
     //console.log('trying to assign to usestate: ', metafields?.whoPaysShippping);
     const initialwhoPaysShippping = metafields?.whoPaysShippping;
     // console.log('initialwhoPaysShippping: ', initialwhoPaysShippping);
@@ -246,23 +256,18 @@ const CustomForm = () => {
         if (initialuseFedExAccount === 'Yes') {
             setIsUsingFedExAccount("Yes");
         }
-
-
     }, [initialuseFedExAccount]);
-
 
     useEffect(() => {
         if (initialAccountNumber) {
             setAccountNumber(initialAccountNumber);
         }
-
-
     }, [initialAccountNumber]);
 
     const [isDisplayingAccountNumber, setIsDisplayingAccountNumber] = useState("FedEx");
     const [isUsingFedExAccount, setIsUsingFedExAccount] = useState("No");
 
-    const [FormFields, setFormFields] = useState(FedEx);
+    // const [FormFields, setFormFields] = useState(FedEx);
 
 
     const initialShipper = metafields?.shipper;
@@ -271,55 +276,15 @@ const CustomForm = () => {
 
 
     function formDataUpdate(initialwhoPaysShippping, initialShipper) {
-        if (initialwhoPaysShippping === 'Sellars Pays Freight') {
-
-        }
-        else {
+        if (initialwhoPaysShippping === 'Customer Pays Freight') {
             const formData = metafields?.formData;
-
-
             if (formData) {
-
                 if (initialShipper === 'FedEx') {
                     setFedExObj(formData);
                 }
                 else if (initialShipper === 'UPS') {
                     setUPSObj(formData);
                 }
-                else if (initialShipper === 'Customer Preferred Carrier') {
-
-                    setCustomerPreferredObj((prevState) => {
-                        let newObj = {};
-                        for (let key in formData) {
-                            if (key in prevState) {
-                                newObj[key] = formData[key];
-                            }
-                        }
-
-                        return newObj;
-                    });
-
-
-                }
-                else if (initialShipper === 'Will Call') {
-
-
-                    setWillCallObj((prevState) => {
-                        let newObj = {};
-                        for (let key in formData) {
-                            if (key in prevState) {
-                                newObj[key] = formData[key];
-                            }
-                        }
-
-                        return newObj;
-                    });
-
-
-
-                }
-
-
             }
         }
     }
@@ -355,27 +320,33 @@ const CustomForm = () => {
 
     const [checkoutid, setCheckoutid] = useState(0);
 
-    const [customerPreferredObj, setCustomerPreferredObj] = useState({
-        CarrierName: "",
-        ContactName: "",
-        Name: "",
-        ContactPhone: "",
-        Address1: "",
-        Address2: "",
-        State: "",
-        City: "",
-        Zip: "",
-        Country: "",
-    });
+    // const [customerPreferredObj, setCustomerPreferredObj] = useState({
+    //     CarrierName: "",
+    //     ContactName: "",
+    //     Name: "",
+    //     ContactPhone: "",
+    //     Address1: "",
+    //     Address2: "",
+    //     State: "",
+    //     City: "",
+    //     Zip: "",
+    //     Country: "",
+    // });
 
-    const [WillCallObj, setWillCallObj] = useState({
-        ContactName: "",
-        ContactPhone: "",
-        ContactEmail: "",
-    });
+    // const [WillCallObj, setWillCallObj] = useState({
+    //     ContactName: "",
+    //     ContactPhone: "",
+    //     ContactEmail: "",
+    // });
 
     const [FedExObj, setFedExObj] = useState("Ground");
     const [UPSObj, setUPSObj] = useState("Ground");
+
+    const [open, setOpen] = React.useState(false);
+    const handleClose = () => {
+        setWhoPaysShipping("Sellars Pays Freight");
+        setOpen(false);
+    };
 
     function sleep(ms) {
         return new Promise((resolve) => {
@@ -384,14 +355,14 @@ const CustomForm = () => {
     }
 
     function showLoadingIndicator() {
-        extensionServiceModule.post({
+        extensionService.post({
             type: ExtensionCommandType.ShowLoadingIndicator,
             payload: { show: true },
         });
     }
 
     function hideLoadingIndicator() {
-        extensionServiceModule.post({
+        extensionService.post({
             type: ExtensionCommandType.ShowLoadingIndicator,
             payload: { show: false },
         });
@@ -410,7 +381,10 @@ const CustomForm = () => {
         //sleep for 3 seconds
         await sleep(1000);
 
+
     }
+
+
 
     function compareConsignments(consignments, previousConsignments) {
         let changed = false;
@@ -457,15 +431,16 @@ const CustomForm = () => {
     const handleShippingChange = async (event) => {
         // console.log(event.target.value);
         setWhoPaysShipping(event.target.value);
+        setOpen(whoPaysShippping === "Customer Pays Freight" ? true : false);
 
-        extensionServiceModule.post({
+        extensionService.post({
             type: ExtensionCommandType.ShowLoadingIndicator,
             payload: { show: true },
         });
         //post message to parent window - hide continue button
         window.top.postMessage(
             "hide-checkout-shipping-continue",
-            "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
+            "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
         );
 
         //call azure function to update the product prices
@@ -482,12 +457,12 @@ const CustomForm = () => {
 
 
         console.log(" reload checkout with updated price.");
-        extensionServiceModule.post({
+        extensionService.post({
             type: ExtensionCommandType.ReloadCheckout,
         });
         window.top.postMessage(
             "show-checkout-shipping-continue",
-            "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
+            "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
         );
 
     };
@@ -529,133 +504,122 @@ const CustomForm = () => {
         setSelectedShipper(Shipper);
 
         if (Shipper === "UPS") {
-            setFormFields(UPS);
             setIsDisplayingAccountNumber("UPS");
-        } else if (Shipper === "Will Call") {
-            setFormFields(WillCall);
-            setIsDisplayingAccountNumber("WillCall");
         } else if (Shipper === "FedEx") {
-            setFormFields(FedEx);
             setIsDisplayingAccountNumber("FedEx");
-        } else if (Shipper === "Customer Preferred Carrier") {
-            setFormFields(CustomerPreferred);
-            setIsDisplayingAccountNumber("Customer Preferred Carrier");
         }
         // sendMessage();
     };
 
-    const renderFormField = (fieldName, fieldType, formName, fieldOptions) => {
+    // const renderFormField = (fieldName, fieldType, formName,fieldOptions) => {
 
-        if (fieldType.type === "text") {
+    //     if (fieldType.type === "text") {
 
-            return (
-                <>
+    //         return (
+    //             <>
+    //                 <TextField
+    //                     fullWidth
+    //                     label={fieldName}
+    //                     variant="outlined" name={fieldName}
+    //                     required={fieldType.required}
+    //                     value={formName === "WillCallObj" ? WillCallObj[fieldName] : customerPreferredObj[fieldName]}
+    //                     onChange={(e) => {
+    //                         if (formName === "FedExObj") {
+    //                             handleFedExChange(e);
+    //                         } else if (formName === "WillCallObj") {
+    //                             handleWillCallChange(e);
+    //                         } else if (formName === "UPSObj") {
+    //                             handleUPSChange(e);
+    //                         } else if (formName === "CustomerPreferredObj") {
+    //                             handleCustomerPreferredChange(e);
+    //                         }
+    //                     }}
+    //                 />
+    //             </>
+    //         );
+    //     } else if (fieldType.type === "dropdown") {
 
-                    <TextField
-                        fullWidth
+    //         return (
+    //             <FormControl fullWidth>
+    //                 <InputLabel>Select a {fieldName}</InputLabel>
+    //                 <Select
+    //                     style={{ marginBottom: "20px" }}
+    //                     name={fieldName}
+    //                     value={formName === "WillCallObj" ? WillCallObj[fieldName] : customerPreferredObj[fieldName]}
+    //                     label={`Select a ${fieldName}`}
+    //                     required={fieldType.required}
+    //                     onChange={(e) => {
+    //                         if (formName === "FedExObj") {
+    //                             handleFedExChange(e);
+    //                         } else if (formName === "WillCallObj") {
+    //                             handleWillCallChange(e);
+    //                         } else if (formName === "UPSObj") {
+    //                             handleUPSChange(e);
+    //                         } else if (formName === "CustomerPreferredObj") {
+    //                             handleCustomerPreferredChange(e);
+    //                         }
+    //                     }}
+    //                 >
+    //                     {fieldOptions.map((option) => (
+    //                         <MenuItem key={option} value={option}>
+    //                             {option}
+    //                         </MenuItem>
+    //                     ))}
+    //                 </Select>
+    //             </FormControl>
+    //         );
+    //     } else if (fieldType.type === "radio") {
+    //         return (
+    //             <div>
+    //                 <FormControlLabel
+    //                     name={fieldName} value={fieldType.label}
+    //                     control={<Radio />} label={fieldType.label}
+    //                     checked={
+    //                         formName === "FedExObj"
+    //                             ? FedExObj === fieldType.label
+    //                             : UPSObj === fieldType.label
+    //                     }
+    //                     onChange={(e) => {
+    //                         if (formName === "FedExObj") {
+    //                             handleFedExChange(e);
+    //                         } else if (formName === "UPSObj") {
+    //                             handleUPSChange(e);
+    //                         }
+    //                     }}
+    //                 />
+    //             </div>
+    //         );
+    //     } else if (fieldType.type === "email") {
+    //         return (
+    //             <>
+    //                 <TextField
+    //                     fullWidth
+    //                     variant="outlined"
+    //                     id={fieldName}
+    //                     type="email"
+    //                     label={fieldName}
+    //                     name={fieldName}
+    //                     value={formName === "WillCallObj" ? WillCallObj[fieldName] : customerPreferredObj[fieldName]}
+    //                     onChange={(e) => {
+    //                         if (formName === "FedExObj") {
+    //                             handleFedExChange(e);
+    //                         } else if (formName === "WillCallObj") {
+    //                             handleWillCallChange(e);
+    //                         } else if (formName === "UPSObj") {
+    //                             handleUPSChange(e);
+    //                         } else if (formName === "CustomerPreferredObj") {
+    //                             handleCustomerPreferredChange(e);
+    //                         }
+    //                     }}
+    //                 />
+    //             </>
+    //         );
+    //     }
+    // };
 
-                        label={fieldName}
-                        variant="outlined" name={fieldName}
-                        required={fieldType.required}
-                        value={formName === "WillCallObj" ? WillCallObj[fieldName] : customerPreferredObj[fieldName]}
-                        onChange={(e) => {
-                            if (formName === "FedExObj") {
-                                handleFedExChange(e);
-                            } else if (formName === "WillCallObj") {
-                                handleWillCallChange(e);
-                            } else if (formName === "UPSObj") {
-                                handleUPSChange(e);
-                            } else if (formName === "CustomerPreferredObj") {
-                                handleCustomerPreferredChange(e);
-                            }
-                        }}
-                    />
-
-                </>
-            );
-        } else if (fieldType.type === "dropdown") {
-
-            return (
-                <FormControl fullWidth>
-                    <InputLabel>Select a {fieldName}</InputLabel>
-                    <Select
-                        style={{ marginBottom: "20px" }}
-                        name={fieldName}
-                        value={formName === "WillCallObj" ? WillCallObj[fieldName] : customerPreferredObj[fieldName]}
-                        label={`Select a ${fieldName}`}
-                        required={fieldType.required}
-                        onChange={(e) => {
-                            if (formName === "FedExObj") {
-                                handleFedExChange(e);
-                            } else if (formName === "WillCallObj") {
-                                handleWillCallChange(e);
-                            } else if (formName === "UPSObj") {
-                                handleUPSChange(e);
-                            } else if (formName === "CustomerPreferredObj") {
-                                handleCustomerPreferredChange(e);
-                            }
-                        }}
-                    >
-                        {fieldOptions.map((option) => (
-                            <MenuItem key={option} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            );
-        } else if (fieldType.type === "radio") {
-            return (
-                <div>
-                    <FormControlLabel
-                        name={fieldName} value={fieldType.label}
-                        control={<Radio />} label={fieldType.label}
-                        checked={
-                            formName === "FedExObj"
-                                ? FedExObj === fieldType.label
-                                : UPSObj === fieldType.label
-                        }
-                        onChange={(e) => {
-                            if (formName === "FedExObj") {
-                                handleFedExChange(e);
-                            } else if (formName === "UPSObj") {
-                                handleUPSChange(e);
-                            }
-                        }}
-                    />
-                </div>
-            );
-        } else if (fieldType.type === "email") {
-            return (
-                <>
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        id={fieldName}
-                        type="email"
-                        label={fieldName}
-                        name={fieldName}
-                        value={formName === "WillCallObj" ? WillCallObj[fieldName] : customerPreferredObj[fieldName]}
-                        onChange={(e) => {
-                            if (formName === "FedExObj") {
-                                handleFedExChange(e);
-                            } else if (formName === "WillCallObj") {
-                                handleWillCallChange(e);
-                            } else if (formName === "UPSObj") {
-                                handleUPSChange(e);
-                            } else if (formName === "CustomerPreferredObj") {
-                                handleCustomerPreferredChange(e);
-                            }
-                        }}
-                    />
-                </>
-            );
-        }
-    };
-
-    const handleFedExAccountChange = (e) => {
-        setIsUsingFedExAccount(e.target.value);
-    };
+    // const handleFedExAccountChange = (e) => {
+    //     setIsUsingFedExAccount(e.target.value);
+    // };
 
 
 
@@ -667,20 +631,19 @@ const CustomForm = () => {
             if (whoPaysFreightLocal === "Customer Pays Freight") {
                 if (!payload?.shipper || payload.shipper === 'Prepaid Truckload' || payload.shipper === 'Prepaid LTL') {
                     payload.shipper = 'FedEx';
-                    payload.useFedExAccount = isUsingFedExAccount;
-                    payload.specialInstructions = specialInstructions;
-                    payload.formData = FedExObj;
-                }
-
-            }
-            else {
-                if (!payload?.shipper || payload.shipper === 'FedEx' || payload.shipper === 'UPS' || payload.shipper === 'Customer Preferred Carrier' || payload.shipper === 'Will Call') {
-                    payload = {};
-                    // console.log('in');
-                    payload.shipper = sellarsShipper ? sellarsShipper : 'Prepaid Truckload';
-                    payload.specialInstructions = specialInstructions;
+                    // payload.useFedExAccount = isUsingFedExAccount;
+                    // payload.specialInstructions = specialInstructions;
+                    // payload.formData = FedExObj;
                 }
             }
+            // else {
+            //     if (!payload?.shipper || payload.shipper === 'FedEx' || payload.shipper === 'UPS' || payload.shipper === 'Customer Preferred Carrier' || payload.shipper === 'Will Call') {
+            //         payload = {};
+            //         // console.log('in');
+            //         payload.shipper = sellarsShipper ? sellarsShipper : 'Prepaid Truckload';
+            //         payload.specialInstructions = specialInstructions;
+            //     }
+            // }
             raw = JSON.stringify({
                 checkoutId: cartId,
                 whoPaysShipping: whoPaysFreightLocal === "Customer Pays Freight" ? "Customer Pays Freight" : "Sellars Pays Freight",
@@ -691,19 +654,19 @@ const CustomForm = () => {
             if (whoPaysShippping === "Customer Pays Freight") {
                 if (!payload?.shipper || payload.shipper === 'Prepaid Truckload' || payload.shipper === 'Prepaid LTL') {
                     payload.shipper = 'FedEx';
-                    payload.useFedExAccount = isUsingFedExAccount;
-                    payload.specialInstructions = specialInstructions;
-                    payload.formData = FedExObj;
+                    // payload.useFedExAccount = isUsingFedExAccount;
+                    // payload.specialInstructions = specialInstructions;
+                    // payload.formData = FedExObj;
                 }
 
             }
             else {
 
-                if (!payload?.shipper || payload.shipper === 'FedEx' || payload.shipper === 'UPS' || payload.shipper === 'Customer Preferred Carrier' || payload.shipper === 'Will Call') {
-                    payload = {};
-                    payload.shipper = 'Prepaid Truckload';
-                    payload.specialInstructions = specialInstructions;
-                }
+                // if (!payload?.shipper || payload.shipper === 'FedEx' || payload.shipper === 'UPS' || payload.shipper === 'Customer Preferred Carrier' || payload.shipper === 'Will Call') {
+                //     payload = {};
+                //     payload.shipper = 'Prepaid Truckload';
+                //     payload.specialInstructions = specialInstructions;
+                // }
             }
             raw = JSON.stringify({
                 checkoutId: cartId,
@@ -747,49 +710,55 @@ const CustomForm = () => {
         if (whoPaysShippping === "Sellars Pays Freight") {
             payload = {
                 whoPaysShippping,
-                shipper: sellarsShipper,
-                specialInstructions
+                // shipper: sellarsShipper,
+                // specialInstructions
             };
         } else if (whoPaysShippping === "Customer Pays Freight") {
             if (selectedShipper === "FedEx") {
                 payload = {
                     whoPaysShippping,
                     shipper: selectedShipper,
+                    AccountNumber: accountNumber
                     // useFedExAccount: isDisplayingAccountNumber,
-                    useFedExAccount: isUsingFedExAccount,
-                    specialInstructions,
-                    formData: FedExObj,
+                    // useFedExAccount: isUsingFedExAccount,
+                    // specialInstructions,
+                    // formData: FedExObj,
                 };
-                if (isUsingFedExAccount === 'Yes') {
-                    payload.AccountNumber = accountNumber;
-                }
-            } else if (selectedShipper === "Customer Preferred Carrier") {
-                payload = {
-                    whoPaysShippping,
-                    shipper: selectedShipper,
-                    AccountNumber: accountNumber,
-                    formData: customerPreferredObj,
-                    specialInstructions,
-                };
+                // if (isUsingFedExAccount === 'Yes') {
+                //     payload.AccountNumber = accountNumber;
+                // }
+                // } else if (selectedShipper === "Customer Preferred Carrier") {
+                //     payload = {
+                //         whoPaysShippping,
+                //         shipper: selectedShipper,
+                //         AccountNumber: accountNumber,
+                //         formData: customerPreferredObj,
+                //         specialInstructions,
+                //     };
             } else if (selectedShipper === "UPS") {
                 payload = {
                     whoPaysShippping,
                     shipper: selectedShipper,
                     AccountNumber: accountNumber,
-                    formData: UPSObj,
-                    specialInstructions,
+                    // formData: UPSObj,
+                    // specialInstructions,
                 };
-            } else if (selectedShipper === "Will Call") {
-                payload = {
-                    whoPaysShippping,
-                    shipper: selectedShipper,
-                    formData: WillCallObj,
-                    specialInstructions,
-                };
+                // } else if (selectedShipper === "Will Call") {
+                //     payload = {
+                //         whoPaysShippping,
+                //         shipper: selectedShipper,
+                //         formData: WillCallObj,
+                //         specialInstructions,
+                //     };
             }
         }
         // console.log(payload);
         showLoadingIndicator();
+        //post message to parent window - hide continue button
+        window.top.postMessage(
+            "hide-checkout-shipping-continue",
+            "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
+        );
         try {
             await UpdateCartPrice(cartId);
         } catch (e) {
@@ -799,25 +768,115 @@ const CustomForm = () => {
         await sleep(1000);
         hideLoadingIndicator();
         console.log(" reload checkout with updated price.");
-        extensionServiceModule.post({
+        extensionService.post({
             type: ExtensionCommandType.ReloadCheckout,
         });
 
         window.top.postMessage(
             "show-checkout-shipping-continue",
-            "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
+            "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
         );
     };
 
     useEffect(() => {
-        // checkoutKitLoaderModule("extension", cartId, setCartId, setCheckoutid, setFlag, compareConsignments, consignmentUpdateTriggered, metafields);
+        checkoutKitLoader.load("extension").then(async function (module) {
+            // console.log("Checkout loader - extension");
+            const params = new URL(document.location).searchParams;
+
+            // console.log("params: ", params);
+
+            const extensionId = params.get("extensionId");
+            // console.log("this is exctention id: ", extensionId);
+            cartId = params.get("cartId");
+
+            async function fetchData() {
+                try {
+                    const response = await fetch(`http://localhost:3000/getCartMetafields/${cartId}`);
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+                    //  console.log(data); // Process the data received from the API
+                    if (data?.data[0]?.value) {
+                        metafields = JSON.parse(data?.data[0]?.value);
+                    }
+
+                    //  console.log('this is metafields',metafields);
+                    setFlag(prev => !prev);
+                } catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+                }
+            }
+
+            // Call the function to fetch the data
+            fetchData();
+
+
+
+            //console.log("this is card id: ", cartId);
+            setCheckoutid(cartId);
+
+            const parentOrigin = params.get("parentOrigin");
+            //  console.log("this is parentOrigin: ", parentOrigin);
+
+            extensionService = await module.initializeExtensionService({
+                extensionId,
+                parentOrigin,
+                taggedElementId: "container",
+            });
+
+            // console.log("extentionService: ", extensionService);
+
+            extensionService.addListener(
+                "EXTENSION:CONSIGNMENTS_CHANGED",
+                async (data) => {
+                    console.log("inside consignments chnaged listener");
+                    showLoadingIndicator();
+
+                    //console.log(data?.payload?.consignments,data?.payload?.previousConsignments);
+
+                    //post message to parent window - hide continue button
+                    window.top.postMessage(
+                        "hide-checkout-shipping-continue",
+                        "https://sellars-absorbent-materials-sandbox-1.mybigcommerce.com"
+                    );
+
+
+
+                    const priceUpdateNeeded = compareConsignments(
+                        data?.payload?.consignments,
+                        data?.payload?.previousConsignments
+                    );
+                    if (priceUpdateNeeded) {
+                        console.log("Consignment updated, need to trigger price update.");
+                        consignmentUpdateTriggered(extensionService, cartId, data);
+                        console.log("reload checkout with updated price.");
+                        extensionService.post({
+                            type: ExtensionCommandType.ReloadCheckout,
+                        });
+
+                    } else {
+                        console.log(
+                            "Key Consignment fields(country, state, shipping option) not updated, no need to trigger price update."
+                        );
+
+
+
+                    }
+                    await sleep(1000);
+                    hideLoadingIndicator();
+                    window.top.postMessage(
+                        "show-checkout-shipping-continue",
+                        "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
+                    );
+
+                }
+            );
+        });
+
         // Cleanup function
-        // console.log("checkout", cartId);
-        // Checkout(cartId);
-        
-        window.top.postMessage("submit-continue", 
-        "https://vivacommerce-b2b-demo-i9.mybigcommerce.com"
-        );
         return () => {
             // Cleanup code if necessary
         };
@@ -825,74 +884,87 @@ const CustomForm = () => {
 
 
 
-    useEffect(() => {
-
-
-    })
-
     return (
-        <>
-            <CheckoutLoader cartId={cartId} setCartId={setCartId} setCheckoutid={setCheckoutid} setFlag={setFlag} compareConsignments={compareConsignments} consignmentUpdateTriggered={consignmentUpdateTriggered} />
-            <div id="container">
-                <div>
-                    <form onSubmit={handleSubmit}>
-                        <div>
-                            <div style={{ marginBottom: "5px" }}>Who Pays Shipping</div>
-                            <Select
-                                fullWidth
-                                required
-                                style={{ marginBottom: "10px" }}
-                                value={whoPaysShippping}
-                                onChange={handleShippingChange}
-                                data-testid="whoPaysShipping"
-                            >
-                                <MenuItem value="Sellars Pays Freight">Sellars Pays Freight</MenuItem>
-                                <MenuItem value="Customer Pays Freight">
-                                    Customer Pays Freight
-                                </MenuItem>
-                            </Select>
+        <div id="container">
+            <div>
+                <form onSubmit={handleSubmit}>
+                    <div>
+                        <div style={{ marginBottom: "5px" }}>Who Pays Shipping</div>
+                        <Select
+                            fullWidth
+                            required
+                            style={{ marginBottom: "10px" }}
+                            value={whoPaysShippping}
+                            onChange={handleShippingChange}
+                            data-testid="whoPaysShipping"
+                        >
+                            <MenuItem value="Sellars Pays Freight">Sellars Pays Freight</MenuItem>
+                            <MenuItem value="Customer Pays Freight">
+                                Customer Pays Freight
+                            </MenuItem>
+                        </Select>
 
-                        </div>
+                    </div>
 
-                        {whoPaysShippping === "Sellars Pays Freight" ? (
+                    <Modal
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={style}>
                             <div>
                                 <div style={{ marginBottom: "5px" }}>Shipper To Use</div>
                                 <Select
-                                    data-testid="shipperToUse1"
+                                    data-testid=""
                                     style={{ marginBottom: "20px" }}
                                     fullWidth
-                                    required
-                                    value={sellarsShipper}
-                                    onChange={handleSellersShipperChange}
-                                    name=""
+                                    value={selectedShipper}
+                                    onChange={handleShipperChange}
                                 >
-                                    <MenuItem value="Prepaid Truckload">Prepaid Truckload</MenuItem>
-                                    <MenuItem value="Prepaid LTL">Prepaid LTL</MenuItem>
+                                    <MenuItem value="FedEx">FedEx</MenuItem>
+                                    {/* <MenuItem value="Customer Preferred Carrier">
+                                        Customer Preferred Carrier
+                                    </MenuItem> */}
+                                    <MenuItem value="UPS">UPS</MenuItem>
+                                    {/* <MenuItem value="Will Call">Will Call</MenuItem> */}
                                 </Select>
                             </div>
-                        ) : (
-                            <>
-                                <div>
-                                    <div style={{ marginBottom: "5px" }}>Shipper To Use</div>
-
+                            {/* {isDisplayingAccountNumber === "Customer Preferred Carrier" || */}
+                            {isDisplayingAccountNumber === "UPS" ? (
+                                <div style={{ marginBottom: "20px" }}>
+                                    <TextField
+                                        fullWidth
+                                        label="Account Number"
+                                        variant="outlined"
+                                        required
+                                        value={accountNumber}
+                                        onChange={(e) => {
+                                            setAccountNumber(e.target.value);
+                                        }}
+                                    />
+                                </div>
+                            ) : null}
+                            {isDisplayingAccountNumber === "FedEx" && (
+                                <>
+                                    {/* <div>
+                                        <label htmlFor="useFedExAccount">
+                                            Use My FedEx Account
+                                        </label>
+                                    </div>
+                                    <div></div>
                                     <Select
-                                        data-testid="shipperToUse2"
                                         style={{ marginBottom: "20px" }}
                                         fullWidth
-                                        value={selectedShipper}
-                                        onChange={handleShipperChange}
+                                        value={isUsingFedExAccount}
+                                        onChange={handleFedExAccountChange}
+                                        name="useFedExAccount"
+                                        id="useFedExAccount"
                                     >
-                                        <MenuItem value="FedEx">FedEx</MenuItem>
-                                        <MenuItem value="Customer Preferred Carrier">
-                                            Customer Preferred Carrier
-                                        </MenuItem>
-                                        <MenuItem value="UPS">UPS</MenuItem>
-                                        <MenuItem value="Will Call">Will Call</MenuItem>
-                                    </Select>
-
-                                </div>
-                                {isDisplayingAccountNumber === "Customer Preferred Carrier" ||
-                                    isDisplayingAccountNumber === "UPS" ? (
+                                        <MenuItem value="No">No</MenuItem>
+                                        <MenuItem value="Yes">Yes</MenuItem>                                     
+                                    </Select> */}
+                                    {/* {isUsingFedExAccount === "Yes" && ( */}
                                     <div style={{ marginBottom: "20px" }}>
                                         <TextField
                                             fullWidth
@@ -903,108 +975,68 @@ const CustomForm = () => {
                                             onChange={(e) => {
                                                 setAccountNumber(e.target.value);
                                             }}
-                                            data-testid="accountNumber-UPS/CPC"
                                         />
                                     </div>
-                                ) : null}
+                                    {/* )} */}
+                                </>
+                            )}
 
-                                {isDisplayingAccountNumber === "FedEx" && (
-                                    <>
-                                        <div>
-                                            <label htmlFor="useFedExAccount">
-                                                Use My FedEx Account
-                                            </label>
-                                        </div>
-                                        <div></div>
-                                        <Select
-                                            style={{ marginBottom: "20px" }}
-                                            fullWidth
-                                            value={isUsingFedExAccount}
-                                            onChange={handleFedExAccountChange}
-                                            name="useFedExAccount"
-                                            id="useFedExAccount"
-                                            data-testid="myFedEx"
-                                        >
-                                            <MenuItem value="No">No</MenuItem>
-                                            <MenuItem value="Yes">Yes</MenuItem>
+                            {/* <div></div>
 
-                                        </Select>
+                            <div>
+                                <Grid container
+                                    spacing={3}>
+                                    {Object.entries(FormFields).map(([fieldName, fieldType]) => (
+                                        <Grid item key={fieldName} fullWidth sm={6}>
+                                            {renderFormField(
+                                                fieldName,
+                                                fieldType,
+                                                fieldType?.formName,
+                                                fieldType?.fieldOptions
+                                            )}
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            </div> */}
 
-                                        {isUsingFedExAccount === "Yes" && (
-                                            <div style={{ marginBottom: "20px" }}>
-                                                <TextField
-                                                    data-testid="accountNumberFedEx"
-                                                    fullWidth
-                                                    label="Account Number"
-                                                    variant="outlined"
-                                                    required
-                                                    value={accountNumber}
-                                                    onChange={(e) => {
-                                                        setAccountNumber(e.target.value);
-                                                    }}
-                                                />
-                                            </div>
-                                        )}
-                                    </>
-                                )}
-
-                                <div></div>
-
-                                <div>
-                                    <Grid container
-                                        spacing={3}>
-                                        {Object.entries(FormFields).map(([fieldName, fieldType]) => (
-                                            <Grid item key={fieldName} fullWidth sm={6}>
-                                                {renderFormField(
-                                                    fieldName,
-                                                    fieldType,
-                                                    fieldType?.formName,
-                                                    fieldType?.fieldOptions
-                                                )}
-                                            </Grid>
-                                        ))}
-                                    </Grid>
-                                </div>
-                            </>
-                        )}
-
-                        <div>
-                            <div style={{ marginTop: "10px" }}>
-                                <label htmlFor="specialInstructions">Special Instructions</label>
-                            </div>
-                            <textarea
-                                name="specialInstructions"
-                                id="specialInstructions"
-                                onChange={(e) => {
-                                    setSpecialInstructions(e.target.value);
-                                }}
-                                rows={4} // Set the number of visible text lines
-                                cols={25} // Set the number of visible text columns
-                            />
+                            {/* <div>
+                        <div style={{ marginTop: "10px" }}>
+                            <label htmlFor="specialInstructions">Special Instructions</label>
                         </div>
-                        <button
-                            id="checkout-submit"
-                            style={{
-                                backgroundColor: "black",
-                                color: "white",
-                                padding: "10px 30px",
-                                borderRadius: "5px",
-                                border: "none",
-                                cursor: "pointer",
-                                fontSize: "16px",
-                                fontWeight: "bold",
-                                marginTop: '15px'
+                        <textarea
+                            name="specialInstructions"
+                            id="specialInstructions"
+                            onChange={(e) => {
+                                setSpecialInstructions(e.target.value);
                             }}
-                            type="submit"
+                            rows={4} // Set the number of visible text lines
+                            cols={25} // Set the number of visible text columns
+                        />
+                    </div> */}
+                            <button
+                                id="checkout-submit"
+                                style={{
+                                    backgroundColor: "black",
+                                    color: "white",
+                                    padding: "10px 30px",
+                                    borderRadius: "5px",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    fontSize: "16px",
+                                    fontWeight: "bold",
+                                    marginTop: '15px'
+                                }}
+                                type="submit"
 
-                        >
-                            Submit Shipping Options
-                        </button>
-                    </form>
-                </div>
-                {/* <div>{selectedShipper}</div> */}
+                            >
+                                Submit Shipping Options
+                            </button>
+                        </Box>
+                    </Modal>
+                </form>
             </div>
-        </>
+            {/* <div>{selectedShipper}</div> */}
+        </div>
     );
 };
 

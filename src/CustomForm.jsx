@@ -13,7 +13,7 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 800,
+    width: 400,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -339,10 +339,10 @@ const CustomForm = () => {
     //     ContactEmail: "",
     // });
 
-    const [FedExObj, setFedExObj] = useState("Ground");
-    const [UPSObj, setUPSObj] = useState("Ground");
+    // const [FedExObj, setFedExObj] = useState("Ground");
+    // const [UPSObj, setUPSObj] = useState("Ground");
 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const handleClose = () => {
         setWhoPaysShipping("Sellars Pays Freight");
         setOpen(false);
@@ -380,10 +380,7 @@ const CustomForm = () => {
 
         //sleep for 3 seconds
         await sleep(1000);
-
-
     }
-
 
 
     function compareConsignments(consignments, previousConsignments) {
@@ -430,8 +427,12 @@ const CustomForm = () => {
 
     const handleShippingChange = async (event) => {
         // console.log(event.target.value);
+        if(event.target.value === "Customer Pays Freight")
+            setOpen(true);
+        else
+            setOpen(false);
         setWhoPaysShipping(event.target.value);
-        setOpen(whoPaysShippping === "Customer Pays Freight" ? true : false);
+        
 
         extensionService.post({
             type: ExtensionCommandType.ShowLoadingIndicator,
@@ -705,6 +706,11 @@ const CustomForm = () => {
         }
     }
 
+    const handleModalSubmit = () => {
+        setOpen(false);
+        console.log(accountNumber+" "+selectedShipper);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (whoPaysShippping === "Sellars Pays Freight") {
@@ -750,6 +756,7 @@ const CustomForm = () => {
                 //         formData: WillCallObj,
                 //         specialInstructions,
                 //     };
+                console.log(payload);
             }
         }
         // console.log(payload);
@@ -881,7 +888,6 @@ const CustomForm = () => {
             // Cleanup code if necessary
         };
     }, []);
-
 
 
     return (
@@ -1026,13 +1032,29 @@ const CustomForm = () => {
                                     fontWeight: "bold",
                                     marginTop: '15px'
                                 }}
-                                type="submit"
-
+                                onClick={handleModalSubmit}
                             >
                                 Submit Shipping Options
                             </button>
                         </Box>
                     </Modal>
+                    <button
+                                id="checkout-submit"
+                                style={{
+                                    backgroundColor: "black",
+                                    color: "white",
+                                    padding: "10px 30px",
+                                    borderRadius: "5px",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    fontSize: "16px",
+                                    fontWeight: "bold",
+                                    marginTop: '15px'
+                                }}
+                                type="submit"
+                            >
+                                Submit
+                            </button>
                 </form>
             </div>
             {/* <div>{selectedShipper}</div> */}

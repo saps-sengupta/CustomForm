@@ -278,14 +278,14 @@ const CustomForm = () => {
     function formDataUpdate(initialwhoPaysShippping, initialShipper) {
         if (initialwhoPaysShippping === 'Customer Pays Freight') {
             const formData = metafields?.formData;
-            if (formData) {
-                if (initialShipper === 'FedEx') {
-                    setFedExObj(formData);
-                }
-                else if (initialShipper === 'UPS') {
-                    setUPSObj(formData);
-                }
-            }
+            // if (formData) {
+            //     if (initialShipper === 'FedEx') {
+            //         setFedExObj(formData);
+            //     }
+            //     else if (initialShipper === 'UPS') {
+            //         setUPSObj(formData);
+            //     }
+            // }
         }
     }
 
@@ -302,16 +302,15 @@ const CustomForm = () => {
             if (initialShipper === "UPS") {
                 setFormFields(UPS);
                 setIsDisplayingAccountNumber("UPS");
-            } else if (initialShipper === "Will Call") {
-                setFormFields(WillCall);
-                setIsDisplayingAccountNumber("WillCall");
+            // } else if (initialShipper === "Will Call") {
+            //     setFormFields(WillCall);
+            //     setIsDisplayingAccountNumber("WillCall");
             } else if (initialShipper === "FedEx") {
                 setFormFields(FedEx);
                 setIsDisplayingAccountNumber("FedEx");
-            } else if (initialShipper === "Customer Preferred Carrier") {
-                setFormFields(CustomerPreferred);
-                setIsDisplayingAccountNumber("Customer Preferred Carrier");
-
+            // } else if (initialShipper === "Customer Preferred Carrier") {
+            //     setFormFields(CustomerPreferred);
+            //     setIsDisplayingAccountNumber("Customer Preferred Carrier");
             }
             //  console.log('dhekc sgipperL ',initialShipper);    
         }
@@ -377,7 +376,6 @@ const CustomForm = () => {
         } catch (e) {
             console.log("Error in requestCartPriceUpdate");
         }
-
         //sleep for 3 seconds
         await sleep(1000);
     }
@@ -454,9 +452,6 @@ const CustomForm = () => {
         await sleep(1000);
         hideLoadingIndicator();
 
-
-
-
         console.log(" reload checkout with updated price.");
         extensionService.post({
             type: ExtensionCommandType.ReloadCheckout,
@@ -468,36 +463,36 @@ const CustomForm = () => {
 
     };
 
-    const handleSellersShipperChange = (e) => {
-        setSellarsShipper(e.target.value);
-        //sendMessage();
-    };
+    // const handleSellersShipperChange = (e) => {
+    //     setSellarsShipper(e.target.value);
+    //     //sendMessage();
+    // };
 
-    function handleWillCallChange(e) {
-        setWillCallObj((prev) => {
+    // function handleWillCallChange(e) {
+    //     setWillCallObj((prev) => {
 
-            return { ...prev, [e.target.name]: e.target.value };
-        });
+    //         return { ...prev, [e.target.name]: e.target.value };
+    //     });
 
-    }
+    // }
 
-    function handleFedExChange(e) {
-        console.log(e.target.value);
-        setFedExObj(e.target.value);
+    // function handleFedExChange(e) {
+    //     console.log(e.target.value);
+    //     setFedExObj(e.target.value);
 
-    }
+    // }
 
-    function handleUPSChange(e) {
-        setUPSObj(e.target.value);
+    // function handleUPSChange(e) {
+    //     setUPSObj(e.target.value);
 
-    }
+    // }
 
-    function handleCustomerPreferredChange(e) {
-        setCustomerPreferredObj((prev) => {
+    // function handleCustomerPreferredChange(e) {
+    //     setCustomerPreferredObj((prev) => {
 
-            return { ...prev, [e.target.name]: e.target.value };
-        });
-    }
+    //         return { ...prev, [e.target.name]: e.target.value };
+    //     });
+    // }
 
     const handleShipperChange = (event) => {
         const Shipper = event.target.value;

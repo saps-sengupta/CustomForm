@@ -12,3 +12,16 @@ textarea {
     height: fit-content;
     min-height: 130px;
 }
+
+.error-container {
+    background-color: #ffe6e6;
+    border: 1px solid #ff3333;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.error-message {
+    color: #ff3333;
+    font-weight: bold;
+}

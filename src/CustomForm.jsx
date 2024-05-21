@@ -300,13 +300,13 @@ const CustomForm = () => {
             setSelectedShipper(initialShipper);
             formDataUpdate(initialwhoPaysShippping, initialShipper);
             if (initialShipper === "UPS") {
-                setFormFields(UPS);
+                // setFormFields(UPS);
                 setIsDisplayingAccountNumber("UPS");
             // } else if (initialShipper === "Will Call") {
             //     setFormFields(WillCall);
             //     setIsDisplayingAccountNumber("WillCall");
             } else if (initialShipper === "FedEx") {
-                setFormFields(FedEx);
+                // setFormFields(FedEx);
                 setIsDisplayingAccountNumber("FedEx");
             // } else if (initialShipper === "Customer Preferred Carrier") {
             //     setFormFields(CustomerPreferred);
@@ -932,7 +932,7 @@ const CustomForm = () => {
                                 </Select>
                             </div>
                             {/* {isDisplayingAccountNumber === "Customer Preferred Carrier" || */}
-                            {isDisplayingAccountNumber === "UPS" ? (
+                            {/* {isDisplayingAccountNumber === "UPS" ? ( */}
                                 <div style={{ marginBottom: "20px" }}>
                                     <TextField
                                         fullWidth
@@ -945,9 +945,9 @@ const CustomForm = () => {
                                         }}
                                     />
                                 </div>
-                            ) : null}
-                            {isDisplayingAccountNumber === "FedEx" && (
-                                <>
+                            {/* ) : null} */}
+                            {/* {isDisplayingAccountNumber === "FedEx" && (
+                                <> */}
                                     {/* <div>
                                         <label htmlFor="useFedExAccount">
                                             Use My FedEx Account
@@ -966,7 +966,7 @@ const CustomForm = () => {
                                         <MenuItem value="Yes">Yes</MenuItem>                                     
                                     </Select> */}
                                     {/* {isUsingFedExAccount === "Yes" && ( */}
-                                    <div style={{ marginBottom: "20px" }}>
+                                    {/* <div style={{ marginBottom: "20px" }}>
                                         <TextField
                                             fullWidth
                                             label="Account Number"
@@ -977,10 +977,10 @@ const CustomForm = () => {
                                                 setAccountNumber(e.target.value);
                                             }}
                                         />
-                                    </div>
+                                    </div> */}
                                     {/* )} */}
-                                </>
-                            )}
+                                {/* </>
+                            )} */}
 
                             {/* <div></div>
 

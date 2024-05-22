@@ -11,10 +11,10 @@ import { FormControl, InputLabel, MenuItem } from "@mui/material";
 
 const style = {
     position: 'absolute',
-    top: '10%',
+    top: '50%',
     left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
+    transform: 'translate(-20%, -20%)',
+    width: 200,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
